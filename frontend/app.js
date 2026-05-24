@@ -55,7 +55,7 @@ const MathUtils = {
 const ApiService = {
     async calcularAlgebraSimbolica(puntos) {
         try {
-            const response = await fetch('http://127.0.0.1:8000/symbolic', {
+            const response = await fetch('https://berstein-project.onrender.com/symbolic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ points: puntos })
