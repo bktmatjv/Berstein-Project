@@ -18,8 +18,7 @@ app = FastAPI(title="Bernstein Symbolic Backend")
 # Configuración estricta de CORS
 app.add_middleware(
     CORSMiddleware,
-    # Permite todas las URLs por ahora. 
-    # Cuando tengas la URL final de tu frontend, cámbiala aquí por seguridad.
+    # Permite todas las URLs 
     allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
@@ -53,7 +52,7 @@ async def get_symbolic_expressions(data: PointsInput):
     B_x = 0
     B_y = 0
 
-    # 1. CÁLCULO SIMBÓLICO (Exactamente como index.py)
+    # 1. CÁLCULO SIMBÓLICO 
     for i, (px, py) in enumerate(vectores_control):
         coef_bin = comb(n, i)
         polinomio_base = coef_bin * (t**i) * ((1 - t)**(n - i))
@@ -63,7 +62,7 @@ async def get_symbolic_expressions(data: PointsInput):
     B_x_exp = sp.expand(B_x)
     B_y_exp = sp.expand(B_y)
 
-    # 2. GENERACIÓN DEL GRÁFICO MATPLOTLIB (Adaptado del index.py original)
+    # 2. GENERACIÓN DEL GRÁFICO MATPLOTLIB 
     t_values = np.linspace(0, 1, 1000)
     trayecto_x, trayecto_y = [], []
     for tv in t_values:

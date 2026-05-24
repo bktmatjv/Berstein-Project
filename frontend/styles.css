@@ -1,3 +1,8 @@
+/*
+    styles.css - Estilos para la Aplicación de Curvas de Bézier
+    Descripción: Este archivo contiene los estilos CSS para la aplicación de curvas de Bézier, incluyendo el diseño general, colores, y estilos específicos para el lienzo SVG y el panel de controles.
+*/
+
 :root {
     --bg-app: #f4f6f9;
     --bg-card: #ffffff;

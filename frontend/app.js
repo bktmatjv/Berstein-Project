@@ -1,6 +1,16 @@
 /**
- * SISTEMA INTERACTIVO CLARO DE POLINOMIOS DE BERNSTEIN IN R²
- * Soporte para Ejes con Números y Plano Movible (Pan & Zoom)
+    Script principal del frontend que maneja el estado de la aplicación, la interacción del usuario, la comunicación con el backend y el renderizado de la escena SVG.
+     - state: Objeto global que almacena los puntos de control, el estado de la cámara y otras variables relevantes.
+     - MathUtils: Funciones matemáticas para calcular la trayectoria de Bernstein.
+     - ApiService: Funciones para comunicarse con el backend.
+     - Renderer: Funciones para dibujar en el SVG y actualizar la interfaz.
+     - Interactor: Funciones para manejar eventos de usuario como clics, arrastres, zoom y entradas manuales.
+
+    El flujo general es:
+     1. El usuario interactúa con la escena (agrega/mueve puntos, hace zoom, etc.).
+     2. El estado se actualiza y se vuelve a renderizar la escena.
+     3. Se sincroniza con el backend para obtener datos simbólicos y gráficos adicionales (sacados de matplotlib).
+     4. Se muestran los resultados del backend en la interfaz (fórmulas LaTeX y gráfico generado).
  */
 
 const state = {
