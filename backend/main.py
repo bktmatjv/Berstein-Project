@@ -120,10 +120,10 @@ async def get_symbolic_expressions(data: PointsInput):
         "plot_img": f"data:image/png;base64,{img_base64}"
     }
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def root():
     return {"status": "ok"}
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health():
     return {"healthy": True}
