@@ -1,0 +1,299 @@
+:root {
+    --bg-app: #f4f6f9;
+    --bg-card: #ffffff;
+    --border-color: #d1d5db;
+    --text-main: #1f2937;
+    --text-muted: #4b5563;
+    --accent: #1d4ed8;       /* Azul matemático nítido */
+    --accent-light: #eff6ff;
+    --accent-danger: #dc2626;
+    --accent-success: #15803d;
+    --grid-line: #e5e7eb;
+}
+
+body.light-theme {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background-color: var(--bg-card);
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+header h1 { margin: 0; font-size: 1.4rem; color: var(--accent); font-weight: 600; text-align: center; }
+.subtitle { margin: 4px 0 0 0; color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+
+.workspace {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 70px);
+}
+
+.canvas-container {
+    flex: 7;
+    background-color: #fafafa;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+}
+
+.pan-notice {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-color);
+    padding: 5px 10px;
+    border-radius: 4px;
+    /*font-size: 0.75rem; */
+    vector-effect: non-scaling-stroke;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Estilos de Dibujo Cartesiano SVG */
+.grid-lines line {
+    stroke: var(--grid-line);
+    stroke-width: 1px;
+}
+.grid-lines line.subgrid {
+    stroke: #f3f4f6;
+}
+
+.axis {
+    stroke: #4b5563;
+    stroke-width: 2px;
+}
+
+.axis-text text {
+    fill: #6b7280;
+    font-family: monospace;
+    font-size: 12px;
+    user-select: none;
+    pointer-events: none;
+}
+
+.structural-line {
+    stroke: var(--accent-danger);
+    stroke-width: 1.5px;
+    stroke-dasharray: 4 4;
+    fill: none;
+}
+
+.curve {
+    stroke: var(--accent);
+    stroke-width: 3px;
+    fill: none;
+    stroke-linecap: round;
+}
+
+.control-node {
+    fill: var(--bg-card);
+    stroke: var(--accent);
+    stroke-width: 3px;
+    cursor: grab;
+    transition: transform 0.1s;
+}
+
+.control-node:hover {
+    fill: var(--accent-light);
+    transform: scale(1.2);
+}
+
+.control-node.dragging {
+    fill: var(--accent);
+    cursor: grabbing;
+}
+
+/* Panel Lateral de Controles */
+.control-panel {
+    flex: 3;
+    background-color: var(--bg-card);
+    border-left: 1px solid var(--border-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.panel-section {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px;
+    background-color: #fdfdfd;
+}
+
+.panel-section h2 {
+    margin-top: 0;
+    font-size: 0.9rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--grid-line);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+
+/* Inputs de coordenadas y Botones */
+.inputs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+.point-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--bg-app);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.point-input-row label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-main);
+    min-width: 65px;
+}
+
+.coord-input {
+    width: 65px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    padding: 4px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.coord-input:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.btn-remove-input {
+    background: none;
+    border: none;
+    color: var(--accent-danger);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-left: auto;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    flex: 1;
+    transition: all 0.2s;
+}
+
+.btn-primary { background-color: var(--accent); color: white; }
+.btn-primary:hover { background-color: #1e40af; }
+.btn-secondary { background-color: #e5e7eb; color: var(--text-main); }
+.btn-secondary:hover { background-color: #d1d5db; }
+.btn-outline { background-color: transparent; border-color: var(--border-color); color: var(--text-muted); }
+.btn-outline.active { background-color: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.btn-danger { background-color: transparent; border-color: #fca5a5; color: var(--accent-danger); }
+.btn-danger:hover { background-color: #fee2e2; }
+
+/* Contenedores de Resultados */
+.matplotlib-container {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.matplotlib-container img { width: 100%; height: auto; }
+
+.math-box {
+    background-color: var(--bg-app);
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid var(--accent);
+    color: var(--text-main);
+}
+
+/* Agregamos vector-effect para que las líneas no engorden con el zoom */
+.grid-lines line {
+    stroke: var(--grid-line);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+}
+.grid-lines line.subgrid {
+    stroke: #f3f4f6;
+}
+
+.axis {
+    stroke: #4b5563;
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+}
+
+.axis-text text {
+    fill: #6b7280;
+    font-family: monospace;
+    /* BORRAMOS EL font-size: 11px; DE AQUÍ */
+}
+
+.structural-line {
+    stroke: var(--accent-danger);
+    stroke-width: 1.5px;
+    stroke-dasharray: 4 4;
+    fill: none;
+    vector-effect: non-scaling-stroke;
+}
+
+.curve {
+    stroke: var(--accent);
+    stroke-width: 3px;
+    fill: none;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.control-node {
+    fill: var(--bg-card);
+    stroke: var(--accent);
+    stroke-width: 3px;
+    cursor: grab;
+    transition: transform 0.1s;
+    vector-effect: non-scaling-stroke; /* Evita que el borde azul se haga gigante */
+}
+
+
+svg {
+    text-rendering: geometricPrecision;
+}

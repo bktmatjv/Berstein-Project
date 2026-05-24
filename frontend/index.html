@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espacio Vectorial - Polinomios de Bernstein</title>
+    <link rel="stylesheet" href="styles.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="light-theme">
+    <div class="app-container">
+        <header>
+            <h1>Combinaciones Lineales en \(\mathbb{R}^2\)</h1>
+            <p class="subtitle">Base de Polinomios de Bernstein — Grupo 2</p>
+        </header>
+
+        <main class="workspace">
+            <div class="canvas-container" id="canvas-wrapper">
+                <svg id="cartesian-plane" width="100%" height="100%">
+                    <g id="viewport-group">
+                        <g id="grid" class="grid-lines"></g>
+                        <line id="axis-x" class="axis" />
+                        <line id="axis-y" class="axis" />
+                        <g id="axis-labels" class="axis-text"></g>
+                        
+                        <path id="structural-polygon" class="structural-line" d="" />
+                        <path id="bernstein-curve" class="curve" d="" />
+                        <g id="control-points"></g>
+                    </g>
+                </svg>
+                <div class="pan-notice">Arrastra con [Clic Derecho] o [Rueda] para mover el plano cartesiano</div>
+            </div>
+
+            <section class="control-panel">
+                <div class="panel-section">
+                    <h2>Entrada de Datos Manual</h2>
+                    <div id="inputs-container" class="inputs-list"></div>
+                    <div class="button-group">
+                        <button id="btn-add-input" class="btn btn-secondary">+ Añadir Punto</button>
+                        <button id="btn-submit-manual" class="btn btn-primary">Generar Combinación</button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2>Controles del Mouse</h2>
+                    <div class="button-group">
+                        <button id="btn-add-mode" class="btn btn-outline">Modo Click en Plano</button>
+                        <button id="btn-clear" class="btn btn-danger">Resetear Todo</button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2>Gráfico Analítico (Matplotlib Backend)</h2>
+                    <div class="matplotlib-container">
+                        <img id="matplotlib-render" src="" alt="Esperando puntos de control..." />
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h2>Regla de Correspondencia Analítica</h2>
+                    <div class="math-box">
+                        <div id="math-output">\(B(t) = (0, 0)\)</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js" type="module"></script>
+</body>
+</html>
