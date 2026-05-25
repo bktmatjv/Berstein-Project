@@ -3,68 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espacio Vectorial - Polinomios de Bernstein</title>
-    <link rel="stylesheet" href="styles.css">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>Proyecto Bernstein | Grupo 2 UPC</title>
+    <style>
+        /* --- PALETA PREMIUM SAAS --- */
+        :root {
+            --bg-page: #f8fafc;
+            --bg-dark: #0f172a;       /* Slate oscuro para el hero */
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-light: #f8fafc;
+            --text-light-muted: #94a3b8;
+            --accent: #6366f1;        /* Índigo principal */
+            --accent-hover: #4f46e5;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --border-color: #e2e8f0;
+            --shadow-float: 0 20px 40px -10px rgba(15, 23, 42, 0.1);
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 24px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            text-decoration: none;
+            letter-spacing: -0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            color: var(--text-light-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-light);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background-color: var(--bg-dark);
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)),
+                radial-gradient(var(--accent) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px;
+            padding: 160px 20px 220px 20px; 
+            text-align: center;
+            position: relative;
+        }
+
+        .overtitle {
+            color: #6366f1;  
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin: 0 auto 24px auto;
+            max-width: 900px;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-light-muted);
+            max-width: 650px;
+            margin: 0 auto 50px auto;
+            line-height: 1.6;
+        }
+
+        /* --- BOTÓN PERSONALIZADO OPTIMIZADO Y SUAVE --- */
+ 
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        /* --- BOTÓN MINIMALISTA PREMIUM --- */
+        .button {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 190px;
+            height: 44px;
+            
+            /* Colores limpios de alto contraste */
+            background-color: #ffffff; /* Blanco inmaculado que resalta sobre el fondo oscuro */
+            color: #0f172a;            /* Texto en el Slate oscuro de tu paleta */
+            
+            /* Tipografía nítida */
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: -0.01em;   /* Tracking premium sutil */
+            
+            /* Bordes y esquinas suaves al estilo iOS/SaaS */
+            border: 1px solid #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            
+            /* Sombra de profundidad suave y elegante */
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.05), 
+                0 4px 12px rgba(0, 0, 0, 0.1);
+                
+            /* Transición micro-suave solo para el cambio de color de fondo */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        /* --- ESTADO HOVER (Micro-cambio sofisticado, sin animaciones bruscas) --- */
+        .button:hover {
+            background-color: #f1f5f9; /* Un gris Slate ultra claro muy sutil */
+            border-color: #f1f5f9;
+        }
+
+        /* --- ESTADO ACTIVE (Clic presionado) --- */
+        .button:active {
+            background-color: #e2e8f0;
+            transform: translateY(0.5px); /* Pequeña respuesta física casi imperceptible al presionar */
+        }
+
+        /* --- TARJETAS FLOTANTES (APLICACIONES) --- */
+        .floating-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: -120px auto 80px auto; 
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 32px 24px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-float);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.15);
+            border-color: var(--accent);
+        }
+
+        .card h3 {
+            margin: 0 0 12px 0;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* --- SECCIÓN DIVIDIDA INFERIOR (OBJETIVOS Y FUNDAMENTO) --- */
+        .split-section {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 80px auto;
+            padding: 0 20px;
+            align-items: center;
+        }
+
+        .split-content h2 {
+            font-size: 1.8rem;
+            margin: 0 0 16px 0;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .split-content p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .center-graphic {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, var(--bg-dark), #1e293b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .center-graphic::after {
+            content: "B(t)";
+            font-family: "SF Mono", monospace;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #6366f1;  
+            text-shadow: 0 0 25px rgba(99, 101, 241, 0.616); 
+                     
+             
+        }
+
+        /* --- ENLACES Y REPOSITORIOS --- */
+        .links-section {
+            text-align: center;
+            padding: 40px 20px 80px 20px;
+        }
+
+        .links-section h2 {
+            color: var(--text-main);
+            margin-bottom: 30px;
+        }
+
+        .repo-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .repo-link {
+            padding: 12px 24px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .repo-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* --- FOOTER / EQUIPO --- */
+        footer {
+            background-color: var(--bg-dark);
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid #1e293b;
+        }
+
+        .team-title {
+            color: var(--text-light-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+        }
+
+        .team-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .team-list li {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.05);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .floating-cards { grid-template-columns: repeat(2, 1fr); margin-top: -60px; }
+            .split-section { grid-template-columns: 1fr; text-align: center; }
+            .center-graphic { margin: 0 auto; }
+            .hero h1 { font-size: 2.8rem; }
+            nav { flex-direction: column; gap: 20px; padding: 20px; }
+        }
+        @media (max-width: 600px) {
+            .floating-cards { grid-template-columns: 1fr; }
+            .hero { padding: 120px 20px 150px 20px; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+    </style>
 </head>
-<body class="light-theme">
-    <div class="app-container">
-        <header>
-            <h1>Combinaciones Lineales en \(\mathbb{R}^2\)</h1>
-            <p class="subtitle">Base de Polinomios de Bernstein — Grupo 2</p>
-        </header>
+<body>
 
-        <main class="workspace">
-            <div class="canvas-container" id="canvas-wrapper">
-                <svg id="cartesian-plane" width="100%" height="100%">
-                    <g id="viewport-group">
-                        <g id="grid" class="grid-lines"></g>
-                        <line id="axis-x" class="axis" />
-                        <line id="axis-y" class="axis" />
-                        <g id="axis-labels" class="axis-text"></g>
-                        
-                        <path id="structural-polygon" class="structural-line" d="" />
-                        <path id="bernstein-curve" class="curve" d="" />
-                        <g id="control-points"></g>
-                    </g>
-                </svg>
-                <div class="pan-notice">Arrastra con [Clic Derecho] o [Rueda] para mover el plano cartesiano</div>
-            </div>
+    <nav>
+        <a href="#" class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16c1.5-3 4-8 9-9"/></svg>
+            Proyecto Bernstein
+        </a>
+        <ul class="nav-links">
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#aplicaciones">Aplicaciones</a></li>
+            <li><a href="#fundamento">Fundamento</a></li>
+            <li><a href="#recursos">Recursos</a></li>
+        </ul>
+    </nav>
 
-            <section class="control-panel">
-                <div class="panel-section">
-                    <h2>Entrada de Datos Manual</h2>
-                    <div id="inputs-container" class="inputs-list"></div>
-                    <div class="button-group">
-                        <button id="btn-add-input" class="btn btn-secondary">+ Añadir Punto</button>
-                        <button id="btn-submit-manual" class="btn btn-primary">Generar Combinación</button>
-                    </div>
-                </div>
+    <header class="hero">
+        <span class="overtitle">Berstein en R²</span>
+        <h1>Construcción de curvas mediante Polinomios de Bernstein</h1>
+        <p>¿Es posible construir curvas suaves y precisas utilizando un conjunto de puntos? Explora cómo los polinomios de Bernstein permiten graficar formas continuas de manera controlada.</p>
+        
+        <div class="button-wrapper">
+            <a href="app.html" class="button">Iniciar Simulación</a>
+        </div>
+    </header>
 
-                <div class="panel-section">
-                    <h2>Controles del Mouse</h2>
-                    <div class="button-group">
-                        <button id="btn-add-mode" class="btn btn-outline">Modo Click en Plano</button>
-                        <button id="btn-clear" class="btn btn-danger">Resetear Todo</button>
-                    </div>
-                </div>
+    <section id="aplicaciones" class="floating-cards">
+        <div class="card">
+            <h3>Aproximación de Funciones</h3>
+            <p>Demostración constructiva del Teorema de Weierstrass, representando funciones complejas a través de expresiones algebraicas estables.</p>
+        </div>
+        <div class="card">
+            <h3>Curvas de Bézier y Diseño</h3>
+            <p>Aplicación estándar en computación gráfica para modificar figuras geométricas vectoriales de manera controlada sin deformaciones bruscas.</p>
+        </div>
+        <div class="card">
+            <h3>Procesamiento Digital</h3>
+            <p>Uso de bases polinómicas para modelar información, reducir irregularidades en señales y reconstruir imágenes mediante análisis computacional.</p>
+        </div>
+        <div class="card">
+            <h3>Simulación en Ingeniería</h3>
+            <p>Modelado de trayectorias suaves en brazos robóticos, simulación de movimientos geométricos y sistemas de navegación automatizada.</p>
+        </div>
+    </section>
 
-                <div class="panel-section">
-                    <h2>Gráfico Analítico (Matplotlib Backend)</h2>
-                    <div class="matplotlib-container">
-                        <img id="matplotlib-render" src="" alt="Esperando puntos de control..." />
-                    </div>
-                </div>
+    <section id="fundamento" class="split-section">
+        <div class="split-content">
+            <h2>Objetivo del Proyecto</h2>
+            <p>Desarrollar un sistema interactivo en Python (FastAPI + SymPy) y JavaScript que construya y visualice curvas en el plano mediante polinomios de Bernstein, garantizando el cálculo de la regla de correspondencia en tiempo real.</p>
+        </div>
+        
+        <div class="center-graphic">B</div>
 
-                <div class="panel-section">
-                    <h2>Regla de Correspondencia Analítica</h2>
-                    <div class="math-box">
-                        <div id="math-output">\(B(t) = (0, 0)\)</div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-    <script src="app.js" type="module"></script>
+        <div class="split-content">
+            <h2>La Base de Bernstein</h2>
+            <p>A diferencia de la interpolación clásica, este enfoque no busca exactitud puntual, sino generar una trayectoria suavizada que permanece contenida dentro de la envoltura convexa formada por los puntos de control.</p>
+        </div>
+    </section>
+
+    <section id="recursos" class="links-section">
+        <h2>Recursos y Código Fuente</h2>
+        <div class="repo-links">
+            <a href="https://github.com/bktmatjv/Berstein-Project" target="_blank" class="repo-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                Repositorio GitHub
+            </a>
+            <a href="https://colab.research.google.com/drive/143v2Snk3nfni_75loirTV2I3OMVnpND0?usp=sharing" target="_blank" class="repo-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                Cuaderno Google Colab
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="team-title">Desarrollado por — Grupo 2 (UPC)</div>
+        <ul class="team-list">
+            <li>Matias Del Castillo</li>
+            <li>Vanessa Jazmin</li>
+            <li>Vivianne Fátima</li>
+            <li>Nicole Abigail</li>
+        </ul>
+    </footer>
+
 </body>
 </html>

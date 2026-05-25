@@ -202,34 +202,62 @@ const Renderer = {
 
     dibujarNodosControl: () => {
         const container = document.getElementById('control-points');
-        container.innerHTML = '';
-        state.points.forEach((p, idx) => {
-            const s = Renderer.toScreen(p[0], p[1]);
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', s.x);
-            circle.setAttribute('cy', s.y);
-            circle.setAttribute('r', 8); // Radio de 8px fijos en pantalla (sin dividir por zoom)
-            circle.setAttribute('class', 'control-node'); 
-            circle.dataset.index = idx;
-            container.appendChild(circle);
-        });
+        const nodosActuales = container.querySelectorAll('.control-node');
+
+        // Si la cantidad de puntos cambió (ej. añadiste/borraste uno), recreamos el DOM
+        if (nodosActuales.length !== state.points.length) {
+            container.innerHTML = '';
+            state.points.forEach((p, idx) => {
+                const s = Renderer.toScreen(p[0], p[1]);
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', s.x);
+                circle.setAttribute('cy', s.y);
+                circle.setAttribute('r', 8); 
+                circle.setAttribute('class', 'control-node'); 
+                
+                // Mantenemos el estado visual si este punto se está arrastrando
+                if (state.draggedIndex === idx) circle.classList.add('dragging');
+                
+                circle.dataset.index = idx;
+                container.appendChild(circle);
+            });
+        } else {
+            // Si la cantidad es la misma (estamos arrastrando), SOLO actualizamos posiciones
+            state.points.forEach((p, idx) => {
+                const s = Renderer.toScreen(p[0], p[1]);
+                nodosActuales[idx].setAttribute('cx', s.x);
+                nodosActuales[idx].setAttribute('cy', s.y);
+            });
+        }
     },
 
     actualizarFormularioInputsManuales: () => {
         const container = document.getElementById('inputs-container');
-        container.innerHTML = '';
-        state.points.forEach((p, idx) => {
-            const row = document.createElement('div');
-            row.className = 'point-input-row';
-            row.innerHTML = `
-                <label>Punto P${idx}:</label>
-                <input type="number" step="any" class="coord-input x-in" value="${p[0]}">
-                <span>,</span>
-                <input type="number" step="any" class="coord-input y-in" value="${p[1]}">
-                <button class="btn-remove-input" data-index="${idx}">&times;</button>
-            `;
-            container.appendChild(row);
-        });
+        const rowsActuales = container.querySelectorAll('.point-input-row');
+
+        if (rowsActuales.length !== state.points.length) {
+            container.innerHTML = '';
+            state.points.forEach((p, idx) => {
+                const row = document.createElement('div');
+                row.className = 'point-input-row';
+                row.innerHTML = `
+                    <label>Punto P${idx}:</label>
+                    <input type="number" step="any" class="coord-input x-in" value="${p[0]}">
+                    <span>,</span>
+                    <input type="number" step="any" class="coord-input y-in" value="${p[1]}">
+                    <button class="btn-remove-input" data-index="${idx}">&times;</button>
+                `;
+                container.appendChild(row);
+            });
+        } else {
+
+            state.points.forEach((p, idx) => {
+                const inputs = rowsActuales[idx].querySelectorAll('.coord-input');
+
+                if (document.activeElement !== inputs[0]) inputs[0].value = p[0];
+                if (document.activeElement !== inputs[1]) inputs[1].value = p[1];
+            });
+        }
     },
 
     
@@ -319,6 +347,10 @@ const Interactor = {
 
         window.addEventListener('mouseup', () => {
             if (state.draggedIndex !== null) {
+                // Remover la clase de agarre visual
+                const draggedNode = document.querySelector(`.control-node[data-index="${state.draggedIndex}"]`);
+                if (draggedNode) draggedNode.classList.remove('dragging');
+
                 state.draggedIndex = null;
                 Interactor.ejecutarSincronizacionCompleta();
             }

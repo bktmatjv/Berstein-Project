@@ -147,9 +147,12 @@ header h1 {
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.2s ease, stroke 0.2s ease;
     vector-effect: non-scaling-stroke;
     
-    /* TRUCO CSS: Transforma el círculo nativo en un Rombo/Diamante minimalista */
+    /* Forma de diamante */
     clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    
+    /* ESTAS DOS LÍNEAS SON LA SOLUCIÓN AL BUG */
     transform-origin: center;
+    transform-box: fill-box; 
 }
 
 .control-node:hover {
