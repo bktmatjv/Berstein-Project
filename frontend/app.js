@@ -232,16 +232,33 @@ const Renderer = {
         });
     },
 
+    
     mostrarDatosBackend: (data) => {
         if (!data) return;
         document.getElementById('matplotlib-render').src = data.plot_img;
         const outputElement = document.getElementById('math-output');
-        outputElement.innerHTML = `
-            $$B_x(t) = ${data.latex.Bx}$$
-            $$B_y(t) = ${data.latex.By}$$
-        `;
+        
+        let htmlContent = `<div class="math-step-title">--- POLINOMIOS DE BERNSTEIN DE GRADO n = ${data.degree} ---</div>`;
+        
+        // 1. Mostrar las bases
+        data.latex.basis.forEach(base_poly => {
+            htmlContent += `$$${base_poly}$$`;
+        });
+
+        // 2. Mostrar la regla sin simplificar
+        htmlContent += `<div class="math-step-title" style="margin-top: 15px;">--- REGLA DE CORRESPONDENCIA (COMBINACIÓN LINEAL) ---</div>`;
+        htmlContent += `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0;">Expresión matemática de la curva (combinación lineal de los polinomios):</p>`;
+        htmlContent += `$$B_x(t) = ${data.latex.Bx_raw}$$`;
+        htmlContent += `$$B_y(t) = ${data.latex.By_raw}$$`;
+
+        // 3. Mostrar el resultado final en formato vectorial B(t) = (X, Y)
+        htmlContent += `<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0; margin-top: 15px;">Regla de correspondencia simplificada:</p>`;
+        htmlContent += `$$B(t) = \\left( ${data.latex.Bx}, \\; ${data.latex.By} \\right)$$`;
+
+        outputElement.innerHTML = htmlContent;
         if (window.MathJax) MathJax.typesetPromise([outputElement]);
     }
+
 };
 
 // --- CAPTURA DE INTERACCIONES (Mouse, Movimiento de Pantalla y Zoom) ---
