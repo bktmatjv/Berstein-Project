@@ -54,13 +54,12 @@ El sistema permite manipular de forma dinámica un conjunto de puntos de control
 
 El desarrollo del presente proyecto ha sido ejecutado de forma equitativa por estudiantes de la **Universidad Peruana de Ciencias Aplicadas**:
 
-| Integrante | Rol Principal |
-| :--- | :--- |
-| **Matias Javier Del Castillo Mendoza** | Desarrollo Fullstack, Lógica del Algoritmo y Arquitectura Web |
-| **Vanessa Jazmin** | Fundamento Teórico, Ejercicios Aplicativos y Documentación Analítica |
-| **Ariatna Ximena** | Análisis Cuantitativo, Validación de Modelos y Control de Calidad |
-| **Vivianne Fátima** | Redacción Académica, Definición de Objetivos e Introducción Técnica |
-| **Nicole Abigail** | Fundamento Álgebraico, Casos de Estudio y Análisis de Envoltura Convexa |
+| Integrante |
+| :--- | 
+| **Matias Javier Del Castillo Mendoza** | 
+| **Vanessa Jazmin** | 
+| **Vivianne Fátima** | 
+| **Nicole Abigail** | 
 
 ---
 
