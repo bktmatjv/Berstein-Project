@@ -12,7 +12,7 @@
 
 ## 🚀 Descripción del Proyecto
 
-Este proyecto consiste en una aplicación **Fullstack Interactiva** diseñada para explorar, modelar y validar analíticamente las **Combinaciones Lineales en $\mathbb{R}^2$** utilizando la infraestructura matemática de la **Base de Polinomios de Bernstein** y las **Curvas de Bézier**.
+Este proyecto consiste en una aplicación **Fullstack Interactiva** diseñada para explorar, modelar y validar analíticamente las **Combinaciones Lineales en $\mathbb{R}^2$** utilizando la infraestructura matemática de la **Base de Polinomios de Bernstein**. 
 
 El sistema permite manipular de forma dinámica un conjunto de puntos de control en un plano cartesiano interactivo. Mientras el usuario altera la geometría en el cliente, un backend especializado resuelve la expansión algebraica simbólica de las funciones paramétricas en tiempo real, garantizando precisión absoluta en todo el dominio continuo $t \in [0, 1]$.
 

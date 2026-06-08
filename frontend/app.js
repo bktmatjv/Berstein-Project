@@ -22,15 +22,18 @@ const state = {
     ],
     isAddingMode: false,
     draggedIndex: null,
-    
+    draggingT: false,
+    t: 0.5, 
     // Configuración inicial de la cámara de la pantalla movible
     panX: 0,
     panY: 0,
-    zoom: 40, // Pixels por unidad matemática
+    zoom: 40, 
     isPanning: false,
     startX: 0,
-    startY: 0
+    startY: 0, 
+
 };
+
 
 const svgElement = document.getElementById('cartesian-plane');
 const viewGroup = document.getElementById('viewport-group');
@@ -48,8 +51,8 @@ const MathUtils = {
         const n = puntos.length - 1;
         if (n < 0) return [];
         const trayectoria = [];
-        for (let k = 0; k <= 150; k++) {
-            const t = k / 150;
+        for (let k = 0; k <= 500; k++) {
+            const t = k / 500;
             let x = 0, y = 0;
             for (let i = 0; i <= n; i++) {
                 const b = MathUtils.polinomioBernstein(i, n, t);
@@ -58,6 +61,23 @@ const MathUtils = {
             trayectoria.push([x, y]);
         }
         return trayectoria;
+    },
+        // evaluar berstein 
+    evaluarBernstein: (puntos, t) => {
+        const n = puntos.length - 1;
+
+        let x = 0;
+        let y = 0;
+
+        for (let i = 0; i <= n; i++) {
+
+            const b = MathUtils.polinomioBernstein(i, n, t);
+
+            x += puntos[i][0] * b;
+            y += puntos[i][1] * b;
+        }
+
+        return [x, y];
     }
 };
 
@@ -88,15 +108,15 @@ const Renderer = {
         const cy = h / 2 + state.panY;
         return {
             x: cx + mathX * state.zoom,
-            y: cy - mathY * state.zoom // Invertimos Y para la pantalla
+            y: cy - mathY * state.zoom 
         };
     },
 
     ajustarCamaraEspacio: () => {
-        // Quitamos el transform CSS problemático
+
         viewGroup.removeAttribute('transform');
         Renderer.actualizarEjesYNumeros();
-        Renderer.actualizarEscena(); // Obligatorio para mover las curvas al hacer pan/zoom
+        Renderer.actualizarEscena(); 
     },
 
     actualizarEjesYNumeros: () => {
@@ -143,7 +163,7 @@ const Renderer = {
                 const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.textContent = x;
                 text.setAttribute('x', s.x);
-                text.setAttribute('y', origin.y + 15); // Desplazamiento fijo en px
+                text.setAttribute('y', origin.y + 15); 
                 text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('dominant-baseline', 'middle');
                 labelsG.appendChild(text);
@@ -175,6 +195,7 @@ const Renderer = {
     actualizarEscena: () => {
         Renderer.dibujarPoligonoEstructural();
         Renderer.dibujarCurvaBernstein();
+        Renderer.dibujarPuntoT();
         Renderer.dibujarNodosControl();
         Renderer.actualizarFormularioInputsManuales();
     },
@@ -189,6 +210,72 @@ const Renderer = {
         polyPath.setAttribute('d', pathData);
     },
 
+    // ANIMACIÓN DE DIBUJADO DE CURVA: Trazo progresivo usando stroke-dasharray y stroke-dashoffset
+    animarCurva: () => {
+        const curvePath = document.getElementById('bernstein-curve');
+
+        const length = curvePath.getTotalLength();
+
+        curvePath.style.strokeDasharray = length;
+        curvePath.style.strokeDashoffset = length;
+
+        const animation = curvePath.animate(
+            [
+                { strokeDashoffset: length },
+                { strokeDashoffset: 0 }
+            ],
+            {
+                duration: 800,
+                easing: "ease-out",
+                fill: "forwards"
+            }
+        );
+
+        animation.onfinish = () => {
+            curvePath.style.strokeDashoffset = 0;
+        };
+    }, 
+
+    encontrarTMasCercano: (mouseX, mouseY) => {
+
+        const trayectoria =
+            MathUtils.obtenerTrayectoriaBernstein(
+                state.points
+            );
+
+        let mejorT = 0;
+        let mejorDist = Infinity;
+
+        trayectoria.forEach((p, i) => {
+
+            const screen =
+                Renderer.toScreen(
+                    p[0],
+                    p[1]
+                );
+
+            const dx =
+                screen.x - mouseX;
+
+            const dy =
+                screen.y - mouseY;
+
+            const dist =
+                dx*dx + dy*dy;
+
+            if (dist < mejorDist) {
+
+                mejorDist = dist;
+
+                mejorT = i / 500;
+
+            }
+
+        });
+
+        return mejorT;
+    }, 
+
     dibujarCurvaBernstein: () => {
         const curvePath = document.getElementById('bernstein-curve');
         const trayectoria = MathUtils.obtenerTrayectoriaBernstein(state.points);
@@ -199,6 +286,53 @@ const Renderer = {
         }).join(' ');
         curvePath.setAttribute('d', pathData);
     },
+    dibujarPuntoT: () => {
+
+        if (state.points.length === 0) {
+
+            const tooltip =
+                document.getElementById(
+                    'curve-tooltip'
+                );
+
+            if (tooltip)
+                tooltip.style.display = 'none';
+
+            return;
+        }
+
+
+        const point =
+            MathUtils.evaluarBernstein(
+                state.points,
+                state.t
+            );
+
+        const screen =
+            Renderer.toScreen(
+                point[0],
+                point[1]
+            );
+
+        const node =
+            document.getElementById('curve-point');
+
+        if (!node) return;
+
+        node.setAttribute('cx', screen.x);
+        node.setAttribute('cy', screen.y);
+
+        
+
+        const coordText =
+            document.getElementById('curve-coordinates');
+
+        if (coordText) {
+            coordText.textContent =
+                `B(t) = (${point[0].toFixed(2)}, ${point[1].toFixed(2)})`;
+        }
+    },
+    
 
     dibujarNodosControl: () => {
         const container = document.getElementById('control-points');
@@ -260,6 +394,10 @@ const Renderer = {
         }
     },
 
+
+
+
+
     
     mostrarDatosBackend: (data) => {
         if (!data) return;
@@ -311,9 +449,24 @@ const Interactor = {
     registrarEventos: () => {
         // Desactivar menú contextual por defecto para usar arrastre libre con clic derecho
         svgElement.addEventListener('contextmenu', e => e.preventDefault());
+        
+        const tooltip = document.getElementById('point-tooltip');
+
 
         svgElement.addEventListener('mousedown', (e) => {
+
+  
+
+
             const target = e.target;
+
+            if (target.id === 'curve-point') {
+
+                state.draggingT = true;
+
+                return;
+            }
+
             if (target.classList.contains('control-node')) {
                 // Drag and drop de nodos
                 state.draggedIndex = parseInt(target.dataset.index);
@@ -328,19 +481,162 @@ const Interactor = {
                 const coord = Interactor.convertirPantallaAEspacio(e.clientX, e.clientY);
                 state.points.push([coord.x, coord.y]);
                 Renderer.actualizarEscena();
+                Renderer.animarCurva();
                 Interactor.ejecutarSincronizacionCompleta();
             }
         });
 
+        // ===== LOGICA DEL MODAL DE MATEMÁTICAS =====
+        const btnExpandMath = document.getElementById('btn-expand-math');
+        const modalMath = document.getElementById('math-modal');
+        const btnCloseModal = document.getElementById('btn-close-modal');
+        const mathOutput = document.getElementById('math-output');
+        const modalMathOutput = document.getElementById('modal-math-output');
+
+        if (btnExpandMath && modalMath && btnCloseModal) {
+            
+            // 1. Abrir Modal
+            btnExpandMath.addEventListener('click', () => {
+                // Copiamos el HTML interno (que ya tiene los SVGs renderizados de MathJax)
+                modalMathOutput.innerHTML = mathOutput.innerHTML;
+                modalMath.classList.remove('hidden');
+            });
+
+            // 2. Cerrar Modal con el botón (X)
+            btnCloseModal.addEventListener('click', () => {
+                modalMath.classList.add('hidden');
+            });
+
+            // 3. Cerrar Modal haciendo clic fuera de la caja blanca
+            modalMath.addEventListener('click', (e) => {
+                if (e.target === modalMath) {
+                    modalMath.classList.add('hidden');
+                }
+            });
+
+            // 4. Cerrar Modal con la tecla Escape (UX Premium)
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modalMath.classList.contains('hidden')) {
+                    modalMath.classList.add('hidden');
+                }
+            });
+        }
+
         svgElement.addEventListener('mousemove', (e) => {
+
+            const rect =
+                svgElement.getBoundingClientRect();
+
+            const mouseX =
+                e.clientX - rect.left;
+
+            const mouseY =
+                e.clientY - rect.top;
+
+            // ===== DRAG DEL PUNTO B(t) =====
+            if (state.draggingT) {
+
+                state.t =
+                    Renderer.encontrarTMasCercano(
+                        mouseX,
+                        mouseY
+                    );
+
+                document
+                    .getElementById('t-slider')
+                    .value = state.t;
+
+                document
+                    .getElementById('t-value')
+                    .textContent =
+                        state.t.toFixed(2);
+
+                Renderer.dibujarPuntoT();
+
+                return;
+            }
+
+            // ===== TOOLTIP DEL PUNTO B(t) =====
+            const curvePoint =
+                document.getElementById('curve-point');
+
+            const curveTooltip =
+                document.getElementById('curve-tooltip');
+
+            if (curvePoint && curveTooltip) {
+
+                const cx =
+                    parseFloat(
+                        curvePoint.getAttribute('cx')
+                    );
+
+                const cy =
+                    parseFloat(
+                        curvePoint.getAttribute('cy')
+                    );
+
+                const dist =
+                    Math.hypot(
+                        mouseX - cx,
+                        mouseY - cy
+                    );
+
+                if (dist < 25) {
+
+                    const point =
+                        MathUtils.evaluarBernstein(
+                            state.points,
+                            state.t
+                        );
+
+                    curveTooltip.style.display = 'block';
+
+                    curveTooltip.style.left =
+                        `${cx + 15}px`;
+
+                    curveTooltip.style.top =
+                        `${cy - 15}px`;
+
+                    curveTooltip.innerHTML =
+                        `
+                        <strong>B(${state.t.toFixed(2)})</strong>
+                        <br>
+                        (${point[0].toFixed(2)}, ${point[1].toFixed(2)})
+                        `;
+
+                } else {
+
+                    curveTooltip.style.display = 'none';
+
+                }
+            }
+
+            // ===== DRAG DE PUNTOS DE CONTROL =====
             if (state.draggedIndex !== null) {
-                const coord = Interactor.convertirPantallaAEspacio(e.clientX, e.clientY);
-                state.points[state.draggedIndex] = [coord.x, coord.y];
+
+                const coord =
+                    Interactor.convertirPantallaAEspacio(
+                        e.clientX,
+                        e.clientY
+                    );
+
+                state.points[state.draggedIndex] =
+                    [coord.x, coord.y];
+
                 Renderer.actualizarEscena();
+
             } else if (state.isPanning) {
-                // Mover pantalla relocalizando el foco de la escena
-                state.panX = Math.round(e.clientX - state.startX);
-                state.panY = Math.round(e.clientY - state.startY);
+
+                state.panX =
+                    Math.round(
+                        e.clientX - state.startX
+                    );
+
+                state.panY =
+                    Math.round(
+                        e.clientY - state.startY
+                    );
+
                 Renderer.ajustarCamaraEspacio();
             }
         });
@@ -355,6 +651,8 @@ const Interactor = {
                 Interactor.ejecutarSincronizacionCompleta();
             }
             if (state.isPanning) state.isPanning = false;
+
+            state.draggingT = false;
         });
 
         // Soporte de Zoom con la rueda del ratón
@@ -372,6 +670,41 @@ const Interactor = {
             Renderer.actualizarEscena();
         });
 
+
+        svgElement.addEventListener('mousemove', (e) => {
+
+            const target = e.target;
+
+            if (target.classList.contains('control-node')) {
+
+                const idx = parseInt(target.dataset.index);
+
+                const point = state.points[idx];
+
+                tooltip.innerHTML = `
+                    <strong>P${idx}</strong><br>
+                    (${point[0]}, ${point[1]})
+                `;
+
+                tooltip.style.left = `${e.offsetX + 15}px`;
+                tooltip.style.top = `${e.offsetY + 15}px`;
+
+                tooltip.classList.add('visible');
+            }
+        });
+
+        svgElement.addEventListener('mouseout', (e) => {
+
+            if (e.target.classList.contains('control-node')) {
+
+                tooltip.classList.remove('visible');
+
+            }
+
+        });
+
+
+
         // Eventos de botones e inputs
         const btnAddMode = document.getElementById('btn-add-mode');
         btnAddMode.addEventListener('click', () => {
@@ -388,12 +721,16 @@ const Interactor = {
         document.getElementById('btn-add-input').addEventListener('click', () => {
             state.points.push([0.0, 0.0]);
             Renderer.actualizarEscena();
+            Renderer.animarCurva();
         });
 
         document.getElementById('inputs-container').addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-remove-input')) {
                 state.points.splice(parseInt(e.target.dataset.index), 1);
-                Renderer.actualizarEscena(); Interactor.ejecutarSincronizacionCompleta();
+                Renderer.actualizarEscena(); 
+                Renderer.animarCurva();
+
+                Interactor.ejecutarSincronizacionCompleta();
             }
         });
 
@@ -407,11 +744,25 @@ const Interactor = {
             });
             state.points = nuevosPuntos;
             Renderer.actualizarEscena();
+            Renderer.animarCurva();
             Interactor.ejecutarSincronizacionCompleta();
         });
 
         // Reajustar coordenadas si cambia el tamaño de la ventana del navegador
         window.addEventListener('resize', () => Renderer.ajustarCamaraEspacio());
+
+                document.getElementById('t-slider').addEventListener('input', e => {
+            state.t =
+                parseFloat(e.target.value);
+
+            document
+                .getElementById('t-value')
+                .textContent =
+                    state.t.toFixed(2);
+
+            Renderer.dibujarPuntoT();
+
+        });
     }
 };
 

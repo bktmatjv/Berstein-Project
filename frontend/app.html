@@ -15,22 +15,6 @@
         </header>
 
         <main class="workspace">
-            <div class="canvas-container" id="canvas-wrapper">
-                <svg id="cartesian-plane" width="100%" height="100%">
-                    <g id="viewport-group">
-                        <g id="grid" class="grid-lines"></g>
-                        <line id="axis-x" class="axis" />
-                        <line id="axis-y" class="axis" />
-                        <g id="axis-labels" class="axis-text"></g>
-                        
-                        <path id="structural-polygon" class="structural-line" d="" />
-                        <path id="bernstein-curve" class="curve" d="" />
-                        <g id="control-points"></g>
-                    </g>
-                </svg>
-                <div class="pan-notice">Arrastra con [Clic Derecho] o [Rueda] para mover el plano cartesiano</div>
-            </div>
-
             <section class="control-panel">
                 <div class="panel-section">
                     <h2>Entrada de Datos Manual</h2>
@@ -50,6 +34,27 @@
                 </div>
 
                 <div class="panel-section">
+                    <h2>Recorrido de la Curva</h2>
+
+                    <input
+                        type="range"
+                        id="t-slider"
+                        min="0"
+                        max="1"
+                        step="0.001"
+                        value="0.5"
+                    >
+
+                    <div class="t-display">
+                        <span>t = <span id="t-value">0.500</span></span>
+                    </div>
+
+                    <div id="curve-coordinates" class="curve-coordinates">
+                        B(t) = (0.00, 0.00)
+                    </div>
+                </div>
+
+                <div class="panel-section">
                     <h2>Gráfico Analítico (Matplotlib Backend)</h2>
                     <div class="matplotlib-container">
                         <img id="matplotlib-render" src="" alt="Esperando puntos de control..." />
@@ -57,14 +62,64 @@
                 </div>
 
                 <div class="panel-section">
-                    <h2>Regla de Correspondencia Analítica</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                        <h2 style="margin: 0; border-bottom: none; padding-bottom: 0;">Regla de Correspondencia Analítica</h2>
+                        <button id="btn-expand-math" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.7rem; flex: 0 0 auto;">Ver más detalle</button>
+                    </div>
                     <div class="math-box">
                         <div id="math-output">\(B(t) = (0, 0)\)</div>
                     </div>
                 </div>
             </section>
+
+            <div class="canvas-container" id="canvas-wrapper">
+                <svg id="cartesian-plane" width="100%" height="100%">
+                    <g id="viewport-group">
+                        <g id="grid" class="grid-lines"></g>
+                        <line id="axis-x" class="axis" />
+                        <line id="axis-y" class="axis" />
+                        <g id="axis-labels" class="axis-text"></g>
+                        
+                        <path id="structural-polygon" class="structural-line" d="" />
+                        <path id="bernstein-curve" class="curve" d="" />
+
+                        <circle id="curve-point" class="curve-tracker" r="7"/>
+                        <g id="control-points"></g>
+                    </g>
+                </svg>
+
+                <div id="point-tooltip" class="point-tooltip"></div>
+                <div id="curve-tooltip" class="curve-tooltip">
+                    <div class="curve-tooltip-title">
+                        Recorrido de la Curva
+                    </div>
+
+                    <div class="curve-tooltip-t">
+                        t = 0.50
+                    </div>
+
+                    <div class="curve-tooltip-coords">
+                        B(t) = (0.00, 0.00)
+                    </div>
+                </div>
+
+                <div class="pan-notice">Arrastra con [Clic Derecho] o [Rueda] para mover el plano cartesiano</div>
+            </div>
         </main>
     </div>
+
+    <div id="math-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Detalle Analítico Completo</h2>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body math-box expanded-math">
+                <div id="modal-math-output"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js" type="module"></script>
 </body>
 </html>
