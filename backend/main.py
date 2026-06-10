@@ -81,6 +81,10 @@ async def get_symbolic_expressions(data: PointsInput):
     unexpanded_y = " + ".join(terms_y).replace("+ -", "- ") if terms_y else "0"
 
     # 2. GENERACIÓN DEL GRÁFICO MATPLOTLIB 
+
+
+
+
     t_values = np.linspace(0, 1, 1000)
     trayecto_x, trayecto_y = [], []
     for tv in t_values:
@@ -92,26 +96,24 @@ async def get_symbolic_expressions(data: PointsInput):
     py_coords = [p[1] for p in vectores_control]
 
     plt.figure(figsize=(8, 5))
-    plt.gcf().patch.set_facecolor('#161b22')
+    plt.gcf().patch.set_facecolor('#ffffff')
     ax = plt.gca()
-    ax.set_facecolor('#070a0e')
+    ax.set_facecolor('#ffffff')
 
-    plt.plot(px_coords, py_coords, 'ro--', alpha=0.6, label="Combinación polinómica estructural")
-    plt.plot(trayecto_x, trayecto_y, 'b', linewidth=2, label="Espacio generado B(t)")
+    plt.plot(px_coords, py_coords, color='#94a3b8', linestyle='--', marker='o', alpha=0.6, label="Combinación polinómica estructural")
+    plt.plot(trayecto_x, trayecto_y, color='#6366f1', linewidth=2, label="Espacio generado B(t)")
 
     for i, p in enumerate(vectores_control):
-        plt.text(p[0] + 0.1, p[1] + 0.1, f"P{i}({p[0]}, {p[1]})", fontsize=9, fontweight='bold', color='#c9d1d9')
+        plt.text(p[0] + 0.1, p[1] + 0.1, f"P{i}({p[0]}, {p[1]})", fontsize=9, fontweight='bold', color='#0f172a')
 
-    ax.tick_params(colors='#8b949e')
-    ax.xaxis.label.set_color('#c9d1d9')
-    ax.yaxis.label.set_color('#c9d1d9')
+    ax.tick_params(colors='#64748b')
+    ax.xaxis.label.set_color('#64748b')
+    ax.yaxis.label.set_color('#64748b')
     ax.title.set_color('#58a6ff')
     
-    plt.title("Transformación Lineal en R² (Matplotlib Backend)")
     plt.xlabel("Eje X")
     plt.ylabel("Eje Y")
-    plt.grid(True, color='#30363d', linestyle='--')
-    plt.legend(facecolor='#161b22', edgecolor='#30363d', labelcolor='#c9d1d9')
+    plt.grid(True, color='#f1f5f9', linestyle='--')
     plt.tight_layout()
 
     buf = io.BytesIO()
