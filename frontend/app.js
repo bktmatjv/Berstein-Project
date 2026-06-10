@@ -763,6 +763,114 @@ const Interactor = {
             Renderer.dibujarPuntoT();
 
         });
+
+
+        // ===== LÓGICA DEL MODAL DE ENTRADA DE TEXTO =====
+        const btnOpenTextInput = document.getElementById('btn-open-text-input');
+        const modalTextInput = document.getElementById('text-input-modal');
+        const btnCloseTextModal = document.getElementById('btn-close-text-modal');
+        const btnCancelTextInput = document.getElementById('btn-cancel-text-input');
+        const btnConfirmTextInput = document.getElementById('btn-confirm-text-input');
+        const textInputArea = document.getElementById('text-input-area');
+
+        if (btnOpenTextInput && modalTextInput) {
+            const closeTextModal = () => modalTextInput.classList.add('hidden');
+
+            // Abrir modal y pre-cargar los puntos actuales
+            btnOpenTextInput.addEventListener('click', () => {
+                textInputArea.value = state.points.map(p => `${p[0]} ${p[1]}`).join('\n');
+                modalTextInput.classList.remove('hidden');
+                textInputArea.focus();
+            });
+
+            // Eventos de cierre
+            btnCloseTextModal.addEventListener('click', closeTextModal);
+            btnCancelTextInput.addEventListener('click', closeTextModal);
+            modalTextInput.addEventListener('click', (e) => {
+                if (e.target === modalTextInput) closeTextModal();
+            });
+
+            // Procesar el texto ingresado
+            btnConfirmTextInput.addEventListener('click', () => {
+                const rawText = textInputArea.value.trim();
+                if (!rawText) return;
+
+                const lines = rawText.split('\n');
+                const nuevosPuntos = [];
+
+                for (let line of lines) {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) continue; // Ignorar líneas vacías
+
+                    // Separar por cualquier cantidad de espacios o tabulaciones
+                    const parts = trimmedLine.split(/\s+/);
+                    
+                    if (parts.length >= 2) {
+                        const x = parseFloat(parts[0]);
+                        const y = parseFloat(parts[1]);
+                        
+                        // Validar que ambos sean números válidos
+                        if (!isNaN(x) && !isNaN(y)) {
+                            nuevosPuntos.push([x, y]);
+                        }
+                    }
+                }
+
+                // Si logramos capturar puntos válidos, actualizamos el estado
+                if (nuevosPuntos.length > 0) {
+                    state.points = nuevosPuntos;
+                    Renderer.actualizarEscena();
+                    Renderer.animarCurva();
+                    Interactor.ejecutarSincronizacionCompleta();
+                    closeTextModal();
+                } else {
+                    alert("No se encontraron coordenadas válidas. Asegúrate de usar el formato: X Y");
+                }
+            });
+        }
+
+        // ===== LÓGICA DEL MODAL DE GRÁFICO MATPLOTLIB AMPLIFICADO =====
+        const btnExpandPlot = document.getElementById('btn-expand-plot');
+        const modalPlot = document.getElementById('plot-modal');
+        const btnClosePlotModal = document.getElementById('btn-close-plot-modal');
+        const plotRenderImg = document.getElementById('matplotlib-render'); // Imagen original en el panel
+        const modalPlotImg = document.getElementById('modal-plot-img');     // Imagen amplificada en el modal
+
+        if (btnExpandPlot && modalPlot && btnClosePlotModal && plotRenderImg && modalPlotImg) {
+
+            const closePlotModal = () => {
+                modalPlot.classList.add('hidden');
+            };
+
+            // Abrir modal con la imagen actual del backend
+            btnExpandPlot.addEventListener('click', () => {
+                // Verificar si hay una imagen que copiar
+                if (plotRenderImg.src) {
+                    // Sincronizar la imagen amplificada con la imagen actual del backend
+                    modalPlotImg.src = plotRenderImg.src;
+                    modalPlot.classList.remove('hidden');
+                } else {
+                    alert("Primero debes generar una combinación lineal para tener un gráfico analítico.");
+                }
+            });
+
+            // Cerrar modal con el botón (X)
+            btnClosePlotModal.addEventListener('click', closePlotModal);
+
+            // Cerrar modal haciendo clic fuera de la caja blanca
+            modalPlot.addEventListener('click', (e) => {
+                if (e.target === modalPlot) {
+                    closePlotModal();
+                }
+            });
+
+            // Cerrar modal con la tecla Escape
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modalPlot.classList.contains('hidden')) {
+                    closePlotModal();
+                }
+            });
+        }
     }
 };
 

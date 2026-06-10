@@ -17,7 +17,10 @@
         <main class="workspace">
             <section class="control-panel">
                 <div class="panel-section">
-                    <h2>Entrada de Datos Manual</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                        <h2 style="margin: 0; border-bottom: none; padding-bottom: 0;">Entrada de Datos Manual</h2>
+                        <button id="btn-open-text-input" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.7rem; flex: 0 0 auto;">Entrada de texto</button>
+                    </div>
                     <div id="inputs-container" class="inputs-list"></div>
                     <div class="button-group">
                         <button id="btn-add-input" class="btn btn-secondary">+ Añadir Punto</button>
@@ -55,7 +58,10 @@
                 </div>
 
                 <div class="panel-section">
-                    <h2>Gráfico Analítico (Matplotlib Backend)</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                        <h2 style="margin: 0; border-bottom: none; padding-bottom: 0;">Gráfico Analítico (Matplotlib Backend)</h2>
+                        <button id="btn-expand-plot" class="btn btn-outline" style="padding: 4px 8px; font-size: 0.7rem; flex: 0 0 auto;">Ampliar Gráfico</button>
+                    </div>
                     <div class="matplotlib-container">
                         <img id="matplotlib-render" src="" alt="Esperando puntos de control..." />
                     </div>
@@ -119,6 +125,36 @@
             </div>
         </div>
     </div>
+
+    <div id="text-input-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Ingreso Múltiple de Puntos</h2>
+                <button id="btn-close-text-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 12px;">Ingresa las coordenadas X e Y separadas por espacios. Un punto por línea.</p>
+                <textarea id="text-input-area" rows="8" placeholder="1 2&#10;2 1&#10;-0.3 4&#10;1 2" class="cp-textarea"></textarea>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button id="btn-cancel-text-input" class="btn btn-secondary" style="flex: none; padding: 8px 16px;">Cancelar</button>
+                    <button id="btn-confirm-text-input" class="btn btn-primary" style="flex: none; padding: 8px 16px;">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="plot-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 1400px; max-height: 95vh;"> <div class="modal-header">
+                <h2 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Gráfico Analítico Amplificado</h2>
+                <button id="btn-close-plot-modal" class="btn-close">&times;</button>
+            </div>
+            <div id="modal-plot-output" class="modal-body matplotlib-container expanded-plot">
+                <img id="modal-plot-img" src="" alt="Gráfico amplificado" style="width: 100%; height: auto; display: block;" />
+            </div>
+        </div>
+    </div>
+
 
     <script src="app.js" type="module"></script>
 </body>
